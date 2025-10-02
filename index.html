@@ -2,14 +2,81 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Demo con Google Sheets</title>
+  <title>Demo Ventas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+
+    #grafico {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
-  <h1>Usuarios desde Google Sheets</h1>
-  <ul id="lista"></ul>
+  <h1>📊 Ventas por persona</h1>
+  <div id="grafico">
+    <canvas id="ventasChart"></canvas>
+  </div>
 
-  <!-- Conectamos nuestro script -->
-  <script src="script.js"></script>
+  <script>
+    async function cargarDatos() {
+      // 👉 Reemplaza con la URL de tu Apps Script publicado
+      const URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec";
+
+      const res = await fetch(URL);
+      const data = await res.json();
+
+      const nombres = data.map(d => d.nombre);
+      const ventas = data.map(d => d.ventas);
+
+      const ctx = document.getElementById("ventasChart").getContext("2d");
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: nombres,
+          datasets: [{
+            label: 'Ventas',
+            data: ventas,
+            backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#333' } },
+            title: {
+              display: true,
+              text: 'Ventas registradas en Google Sheets',
+              color: '#444',
+              font: { size: 18 }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#444' } },
+            y: { ticks: { color: '#444' } }
+          }
+        }
+      });
+    }
+
+    cargarDatos();
+  </script>
 </body>
 </html>
-
